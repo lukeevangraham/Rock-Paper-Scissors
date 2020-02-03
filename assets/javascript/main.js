@@ -15,15 +15,17 @@ var database = firebase.database();
 
 // Initialize the FirebaseUI Widget using Firebase.
 var ui = new firebaseui.auth.AuthUI(firebase.auth());
-let playerOne
-let playerTwo
+let playerOne = {}
+let playerTwo = {}
 
 const determinePlayerStatus = auth => {
   console.log(auth.user.displayName);
   if (!playerOne) {
-      playerOne = auth.user.displayName;
+      playerOne.name = auth.user.displayName;
+      database.ref().push(playerOne)
   } else if (!playerTwo) {
-      playerTwo = auth.user.displayName;
+      playerTwo.name = auth.user.displayName;
+      database.ref().push(playerTwo)
   } else {
       alert("Too many players.  Only two players at a time")
   }
