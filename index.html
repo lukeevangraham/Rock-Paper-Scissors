@@ -13,11 +13,19 @@
       integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
       crossorigin="anonymous"
     />
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
   </head>
-  <body>
+  <body class="bg-dark text-white">
       <div class="container">
+          <div class="jumbotron bg-warning text-dark">
+              <h1 class="display-4">Rock, Paper, Scissors
+                  <h2 class="display-5">Multiplayer</h2>
+          </div>
           <div class="row">
-              <div class="col-12">Hello</div>
+              <div class="col-12">
+                <div id="firebaseui-auth-container"></div>
+                <div id="loader">Loading...</div>
+              </div>
           </div>
       </div>
 
@@ -30,6 +38,10 @@
 
 
     <script src="https://www.gstatic.com/firebasejs/7.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.8.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.8.0/firebase-database.js"></script>
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
+
     <script
       src="https://code.jquery.com/jquery-3.4.1.min.js"
       integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
