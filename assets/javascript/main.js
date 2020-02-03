@@ -30,8 +30,12 @@ const determinePlayerStatus = auth => {
       alert("Too many players.  Only two players at a time")
   }
 
-  $(`#playerOne`).append(`<div>` + playerOne.name + `</div>`)
 };
+
+const handleChild = childSnapshot => {
+    playerOne.name ? ($(`#playerOne`).append(`<div>` + playerOne.name + `</div>`)) : ''
+    playerTwo.name ? ($(`#playerTwo`).append(`<div>` + playerOne.name + `</div>`)) : ''
+}
 
 var uiConfig = {
   callbacks: {
@@ -65,3 +69,9 @@ var uiConfig = {
 
 // The start method will wait until the DOM is loaded.
 ui.start("#firebaseui-auth-container", uiConfig);
+
+
+
+database.ref().on("child_added", function(childSnapshot) {
+    handleChild(childSnapshot)
+})
