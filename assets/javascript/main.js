@@ -33,6 +33,7 @@ const determinePlayerStatus = auth => {
 };
 
 const handleChild = childSnapshot => {
+    determinePlayerStatus(childSnapshot)
     playerOne.name ? ($(`#playerOne`).append(`<div>` + playerOne.name + `</div>`)) : ''
     playerTwo.name ? ($(`#playerTwo`).append(`<div>` + playerOne.name + `</div>`)) : ''
 }
@@ -44,7 +45,7 @@ var uiConfig = {
       // Return type determines whether we continue the redirect automatically
       // or whether we leave that to developer to handle.
       console.log(authResult);
-      determinePlayerStatus(authResult);
+    //   determinePlayerStatus(authResult);
       return false;
     },
     uiShown: function() {
