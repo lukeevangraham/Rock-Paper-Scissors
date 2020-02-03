@@ -20,7 +20,6 @@ let playerTwo
 
 const determinePlayerStatus = auth => {
   console.log(auth.user.displayName);
-  console.log("Hi");
   if (!playerOne) {
       playerOne = auth.user.displayName;
   } else if (!playerTwo) {
@@ -28,6 +27,8 @@ const determinePlayerStatus = auth => {
   } else {
       alert("Too many players.  Only two players at a time")
   }
+
+  $(`#playerOne`).append(`<div>` + playerOne + `</div>`)
 };
 
 var uiConfig = {
