@@ -13,6 +13,8 @@ firebase.initializeApp(firebaseConfig);
 
 var database = firebase.database();
 
+let connectionsRef = database.ref("/connections");
+
 // Initialize the FirebaseUI Widget using Firebase.
 var ui = new firebaseui.auth.AuthUI(firebase.auth());
 let playerOne = {}
@@ -24,10 +26,10 @@ const determinePlayerStatus = auth => {
   console.log("TWO: ", playerTwo)
   if (!playerOne.name) {
       playerOne.name = auth;
-    //   database.ref().push(playerOne)
+      connectionsRef.push(playerOne)
   } else if (!playerTwo.name) {
       playerTwo.name = auth;
-    //   database.ref().push(playerTwo)
+      connectionsRef.ref().push(playerTwo)
   } else {
       console.log("Too many players.  Only two players at a time")
   }
@@ -48,7 +50,7 @@ var uiConfig = {
       // Return type determines whether we continue the redirect automatically
       // or whether we leave that to developer to handle.
       console.log(authResult);
-    //   determinePlayerStatus(authResult);
+      determinePlayerStatus(authResult);
       return false;
     },
     uiShown: function() {
@@ -74,7 +76,9 @@ var uiConfig = {
 // The start method will wait until the DOM is loaded.
 ui.start("#firebaseui-auth-container", uiConfig);
 
-
+function userUnloading() {
+    alert("are you sure?")
+}
 
 database.ref().on("child_added", function(childSnapshot) {
     handleChild(childSnapshot)
