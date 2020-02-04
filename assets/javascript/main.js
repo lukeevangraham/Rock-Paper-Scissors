@@ -27,10 +27,10 @@ const determinePlayerStatus = auth => {
   if (!playerOne.name) {
       playerOne.name = auth.user.displayName;
       console.log("LOOK HERE", playerOne)
-      // connectionsRef.push(playerOne)
+      connectionsRef.push(playerOne)
   } else if (!playerTwo.name) {
-      playerTwo.name = auth;
-      // connectionsRef.ref().push(playerTwo)
+      playerTwo.name = auth.user.displayName;
+      connectionsRef.ref().push(playerTwo)
   } else {
       console.log("Too many players.  Only two players at a time")
   }
