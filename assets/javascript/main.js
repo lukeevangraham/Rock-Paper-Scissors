@@ -12,90 +12,61 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 var database = firebase.database();
+let playersRef = database.ref("players");
 
-let connectionsRef = database.ref("/connections");
+let currentPlayers;
+let username;
+let playerOne;
+let playerTwo;
+let playerNum;
+let playerOneExists;
+let playerTwoExists;
+let playerOneData;
+let playerTwoData;
 
-var connectedRef = database.ref(".info/connected");
+playersRef.on("value", function(snapshot) {
+  console.log("LOOK HERE: ", snapshot.numChildren());
 
-connectedRef.on("value", function(snap) {
-  if (snap.val()) {
-    var con = connectionsRef.push(true);
+  currentPlayers = snapshot.numChildren();
 
-    con.onDisconnect().remove();
-  }
-})
+  playerOneExists = snapshot.child("1").exists();
+  playerTwoExists = snapshot.child("2").exists();
 
-// When first loaded or when the connections list changes
-connectionsRef.on("value", function(snapshot) {
-  $("#watchers").text(snapshot.numChildren());
-})
+  playerOneData = snapshot.child("1").val();
+  playerTwoData = snapshot.child("2").val();
 
-// // Initialize the FirebaseUI Widget using Firebase.
-// var ui = new firebaseui.auth.AuthUI(firebase.auth());
-// let playerOne = {}
-// let playerTwo = {}
+  playerOneExists ? $(`#playerOne`).text(playerOneData.name) : $(`#playerOne`).text("Waiting for Player 1");
+  playerTwoExists ? $(`#playerTwo`).text(playerTwoData.name) : $(`#playerTwo`).text("Waiting for Player 2");;
+});
 
-// const determinePlayerStatus = auth => {
-//   console.log(auth);
-//   console.log("ONE: ", playerOne)
-//   console.log("TWO: ", playerTwo)
-//   if (!playerOne.name) {
-//       playerOne.name = auth.user.displayName;
-//       console.log("LOOK HERE", playerOne)
-//       connectionsRef.push(playerOne)
-//   } else if (!playerTwo.name) {
-//       playerTwo.name = auth.user.displayName;
-//       connectionsRef.ref().push(playerTwo)
-//   } else {
-//       console.log("Too many players.  Only two players at a time")
-//   }
+// playersRef.on("child_added", function(snapshot) {
 
-// };
-
-// const handleChild = childSnapshot => {
-//     console.log("LOOK HERE: ", childSnapshot.val())
-//     determinePlayerStatus(childSnapshot.val().name)
-//     playerOne.name ? ($(`#playerOne`).append(`<div>` + playerOne.name + `</div>`)) : ''
-//     playerTwo.name ? ($(`#playerTwo`).append(`<div>` + playerOne.name + `</div>`)) : ''
-// }
-
-// var uiConfig = {
-//   callbacks: {
-//     signInSuccessWithAuthResult: function(authResult, redirectUrl) {
-//       // User successfully signed in.
-//       // Return type determines whether we continue the redirect automatically
-//       // or whether we leave that to developer to handle.
-//       console.log(authResult);
-//       determinePlayerStatus(authResult);
-//       return false;
-//     },
-//     uiShown: function() {
-//       // The widget is rendered.
-//       // Hide the loader.
-//       document.getElementById("loader").style.display = "none";
-//     }
-//   },
-//   // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
-//   signInFlow: "popup",
-//   // signInSuccessUrl: '<url-to-redirect-to-on-success>',
-//   signInOptions: [
-//     // Leave the lines as is for the providers you want to offer your users.
-//     firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-//     firebase.auth.GithubAuthProvider.PROVIDER_ID
-//   ]
-//   // Terms of service url.
-//   // tosUrl: '<your-tos-url>',
-//   // Privacy policy url.
-//   // privacyPolicyUrl: '<your-privacy-policy-url>'
-// };
-
-// // The start method will wait until the DOM is loaded.
-// ui.start("#firebaseui-auth-container", uiConfig);
-
-// function userUnloading() {
-//     alert("are you sure?")
-// }
-
-// database.ref().on("child_added", function(childSnapshot) {
-//     handleChild(childSnapshot)
+//   $(`#playerOne`).text(snapshot.val().name)
 // })
+
+$(`#nameSubmit`).click(function(form) {
+  console.log($(`#username`).val());
+  username = $(`#username`).val();
+  joinGame();
+});
+
+function joinGame() {
+  // $(`#playerOne`).text($(`#username`).val())
+  if (!playerOneExists) {
+    playerNum = 1;
+    // playerOne = {name: $(`#username`).val(), wins: 0, losses: 0, choice: null}
+  } else if (!playerTwoExists) {
+    playerNum = 2;
+  }
+
+  playerRef = database.ref("/players/" + playerNum);
+
+  playerRef.set({
+    name: $(`#username`).val(),
+    wins: 0,
+    losses: 0,
+    choice: null
+  });
+
+  playerRef.onDisconnect().remove();
+}
