@@ -118,40 +118,43 @@ function processChoice(choice) {
   if (playerNum === 1) {
     $(`#playerOneChoices`).empty();
   } else if (playerNum === 2) {
-    $(`#playerTwoChoices`).empty();
+    // $(`#playerTwoChoices`).empty();
   }
 }
 
 function compareChoices() {
+  $(`#playerOneChoices`).text(playerOneData.choice)
+  $(`#playerTwoChoices`).text(playerTwoData.choice)
+  console.log("PLAYER 2: ", playerTwoData)
   if (playerOneData.choice === 'rock') {
     if (playerTwoData.choice === 'rock') {
-      console.log("TIE!")
+      $(`#stage`).text("TIE!")
     }
     if (playerTwoData.choice === 'paper') {
-      console.log("PLAYER 2 WINS")
+      $(`#stage`).text(playerTwoData.name.toUpperCase() + " WINS")
     }
     if (playerTwoData.choice === 'scissors') {
-      console.log("PLAYER 1 WINS")
+      $(`#stage`).text(playerOneData.name.toUpperCase() + " WINS")
     }
   } else if (playerOneData.choice === 'paper') {
     if (playerTwoData.choice === 'rock') {
-      console.log("PLAYER 1 WINS")
+      $(`#stage`).text(playerOneData.name.toUpperCase() + " WINS")
     }
     if (playerTwoData.choice === 'paper') {
-      console.log("TIE!")
+      $(`#stage`).text("TIE!")
     }
     if (playerTwoData.choice === 'scissors') {
-      console.log("PLAYER 2 WINS")
+      $(`#stage`).text(playerTwoData.name.toUpperCase() + " WINS")
     }
   } else if (playerOneData.choice === 'scissors') {
     if (playerTwoData.choice === 'rock') {
-      console.log("PLAYER 2 WINS")
+      $(`#stage`).text(playerTwoData.name.toUpperCase() + " WINS")
     }
     if (playerTwoData.choice === 'paper') {
-      console.log("PLAYER 1 WINS")
+      $(`#stage`).text(playerOneData.name.toUpperCase() + " WINS")
     }
     if (playerTwoData.choice === 'scissors') {
-      console.log("TIE!")
+      $(`#stage`).text("TIE!")
     }
   }
 }
