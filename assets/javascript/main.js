@@ -25,7 +25,7 @@ let playerOneData;
 let playerTwoData;
 
 playersRef.on("value", function(snapshot) {
-  console.log("LOOK HERE: ", snapshot.numChildren());
+  // console.log("LOOK HERE: ", snapshot.numChildren());
 
   currentPlayers = snapshot.numChildren();
 
@@ -35,8 +35,17 @@ playersRef.on("value", function(snapshot) {
   playerOneData = snapshot.child("1").val();
   playerTwoData = snapshot.child("2").val();
 
-  playerOneExists ? $(`#playerOne`).text(playerOneData.name) : $(`#playerOne`).text("Waiting for Player 1");
-  playerTwoExists ? $(`#playerTwo`).text(playerTwoData.name) : $(`#playerTwo`).text("Waiting for Player 2");;
+  playerOneExists
+    ? $(`#playerOne`).text(playerOneData.name)
+    : $(`#playerOne`).text("Waiting for Player 1");
+  playerTwoExists
+    ? $(`#playerTwo`).text(playerTwoData.name)
+    : $(`#playerTwo`).text("Waiting for Player 2");
+
+  if (playerOneExists && playerTwoExists) {
+    // console.log("LETS PLAY A GAME!");
+    initiateTurn();
+  }
 });
 
 // playersRef.on("child_added", function(snapshot) {
@@ -45,13 +54,12 @@ playersRef.on("value", function(snapshot) {
 // })
 
 $(`#nameSubmit`).click(function(form) {
-  console.log($(`#username`).val());
+  // console.log($(`#username`).val());
   username = $(`#username`).val();
   joinGame();
 });
 
 function joinGame() {
-  // $(`#playerOne`).text($(`#username`).val())
   if (!playerOneExists) {
     playerNum = 1;
     // playerOne = {name: $(`#username`).val(), wins: 0, losses: 0, choice: null}
@@ -68,5 +76,45 @@ function joinGame() {
     choice: null
   });
 
+  $(`#belowJumbo`).replaceWith(
+    `<div class="row"><div class="col-12 text-center m-3">Hi ` +
+      username +
+      `!  You are Player ` +
+      playerNum +
+      `</div></div>`
+  );
+
   playerRef.onDisconnect().remove();
+}
+
+function initiateTurn() {
+  console.log("PLAYER ONE: ", playerOneData);
+  if (!playerOneData.choice) {
+    if (username === playerOneData.name) {
+      $(`#playerOneChoices`).html(
+        `<button onclick="processChoice('rock')">Rock</button><button onclick="processChoice('paper')">Paper</button><button onclick="processChoice('scissors')">Scissors</button>`
+      );
+    }
+  } else if (!playerTwoData.choice) {
+    if ((username === playerTwoData.name)) {
+      $(`#playerTwoChoices`).html(
+        `<button onclick="processChoice('rock')">Rock</button><button onclick="processChoice('paper')">Paper</button><button onclick="processChoice('scissors')">Scissors</button>`
+      )
+    }
+  }
+}
+
+function processChoice(choice) {
+  console.log("CHOICE: ", choice)
+  playerRef = database.ref("/players/" + playerNum);
+  
+  playerRef.update({
+    choice: choice
+  })
+  
+  if (playerNum === 1) {
+    $(`#playerOneChoices`).empty();
+  } else if (playerNum === 2) {
+    $(`#playerTwoChoices`).empty()
+  }
 }
