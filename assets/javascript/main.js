@@ -42,6 +42,10 @@ playersRef.on("value", function(snapshot) {
     ? $(`#playerTwo`).text(playerTwoData.name)
     : $(`#playerTwo`).text("Waiting for Player 2");
 
+  if (playerOneData.choice && playerTwoData.choice) {
+    compareChoices()
+  }
+
   if (playerOneExists && playerTwoExists) {
     // console.log("LETS PLAY A GAME!");
     initiateTurn();
@@ -88,7 +92,6 @@ function joinGame() {
 }
 
 function initiateTurn() {
-  console.log("PLAYER ONE: ", playerOneData);
   if (!playerOneData.choice) {
     if (username === playerOneData.name) {
       $(`#playerOneChoices`).html(
@@ -96,25 +99,59 @@ function initiateTurn() {
       );
     }
   } else if (!playerTwoData.choice) {
-    if ((username === playerTwoData.name)) {
+    if (username === playerTwoData.name) {
       $(`#playerTwoChoices`).html(
         `<button onclick="processChoice('rock')">Rock</button><button onclick="processChoice('paper')">Paper</button><button onclick="processChoice('scissors')">Scissors</button>`
-      )
+      );
     }
   }
 }
 
 function processChoice(choice) {
-  console.log("CHOICE: ", choice)
+  console.log("CHOICE: ", choice);
   playerRef = database.ref("/players/" + playerNum);
-  
+
   playerRef.update({
     choice: choice
-  })
-  
+  });
+
   if (playerNum === 1) {
     $(`#playerOneChoices`).empty();
   } else if (playerNum === 2) {
-    $(`#playerTwoChoices`).empty()
+    $(`#playerTwoChoices`).empty();
+  }
+}
+
+function compareChoices() {
+  if (playerOneData.choice === 'rock') {
+    if (playerTwoData.choice === 'rock') {
+      console.log("TIE!")
+    }
+    if (playerTwoData.choice === 'paper') {
+      console.log("PLAYER 2 WINS")
+    }
+    if (playerTwoData.choice === 'scissors') {
+      console.log("PLAYER 1 WINS")
+    }
+  } else if (playerOneData.choice === 'paper') {
+    if (playerTwoData.choice === 'rock') {
+      console.log("PLAYER 1 WINS")
+    }
+    if (playerTwoData.choice === 'paper') {
+      console.log("TIE!")
+    }
+    if (playerTwoData.choice === 'scissors') {
+      console.log("PLAYER 2 WINS")
+    }
+  } else if (playerOneData.choice === 'scissors') {
+    if (playerTwoData.choice === 'rock') {
+      console.log("PLAYER 2 WINS")
+    }
+    if (playerTwoData.choice === 'paper') {
+      console.log("PLAYER 1 WINS")
+    }
+    if (playerTwoData.choice === 'scissors') {
+      console.log("TIE!")
+    }
   }
 }
