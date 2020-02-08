@@ -36,14 +36,20 @@ playersRef.on("value", function(snapshot) {
   playerTwoData = snapshot.child("2").val();
 
   playerOneExists
-    ? $(`#playerOne`).text(playerOneData.name)
+    ? ($(`#playerOne`).text(playerOneData.name),
+      $(`#playerOneScores`).text(
+        `Wins : ` + playerOneData.wins + ` Losses: ` + playerOneData.losses
+      ))
     : $(`#playerOne`).text("Waiting for Player 1");
   playerTwoExists
-    ? $(`#playerTwo`).text(playerTwoData.name)
+    ? ($(`#playerTwo`).text(playerTwoData.name),
+      $(`#playerTwoScores`).text(
+        `Wins : ` + playerTwoData.wins + ` Losses: ` + playerTwoData.losses
+      ))
     : $(`#playerTwo`).text("Waiting for Player 2");
 
   if (playerOneData.choice && playerTwoData.choice) {
-    compareChoices()
+    compareChoices();
   }
 
   if (playerOneExists && playerTwoExists) {
@@ -77,7 +83,7 @@ function joinGame() {
     name: $(`#username`).val(),
     wins: 0,
     losses: 0,
-    choice: null
+    choice: ""
   });
 
   $(`#belowJumbo`).replaceWith(
@@ -122,39 +128,50 @@ function processChoice(choice) {
   }
 }
 
+function playerTwoWins() {
+  playerOneRef = database.ref("/players/" + 1)
+  playerTwoRef = database.ref("/players/" + 2)
+
+  playerOneRef.child("losses").set(playerOneData.losses + 1)
+  playerTwoRef.child("wins").set(playerTwoData.wins + 1)
+}
+
 function compareChoices() {
-  $(`#playerOneChoices`).text(playerOneData.choice)
-  $(`#playerTwoChoices`).text(playerTwoData.choice)
-  console.log("PLAYER 2: ", playerTwoData)
-  if (playerOneData.choice === 'rock') {
-    if (playerTwoData.choice === 'rock') {
-      $(`#stage`).text("TIE!")
+  playerOneRef = database.ref("/players/" + 1);
+  playerTwoRef = database.ref("/players/" + 2);
+  $(`#playerOneChoices`).text(playerOneData.choice);
+  $(`#playerTwoChoices`).text(playerTwoData.choice);
+  console.log("PLAYER 2: ", playerTwoData);
+  if (playerOneData.choice === "rock") {
+    if (playerTwoData.choice === "rock") {
+      $(`#stage`).text("TIE!");
     }
-    if (playerTwoData.choice === 'paper') {
-      $(`#stage`).text(playerTwoData.name.toUpperCase() + " WINS")
+    if (playerTwoData.choice === "paper") {
+      $(`#stage`).text(playerTwoData.name.toUpperCase() + " WINS");
+      playerTwoWins();
     }
-    if (playerTwoData.choice === 'scissors') {
-      $(`#stage`).text(playerOneData.name.toUpperCase() + " WINS")
+    if (playerTwoData.choice === "scissors") {
+      $(`#stage`).text(playerOneData.name.toUpperCase() + " WINS");
     }
-  } else if (playerOneData.choice === 'paper') {
-    if (playerTwoData.choice === 'rock') {
-      $(`#stage`).text(playerOneData.name.toUpperCase() + " WINS")
+  } else if (playerOneData.choice === "paper") {
+    if (playerTwoData.choice === "rock") {
+      $(`#stage`).text(playerOneData.name.toUpperCase() + " WINS");
     }
-    if (playerTwoData.choice === 'paper') {
-      $(`#stage`).text("TIE!")
+    if (playerTwoData.choice === "paper") {
+      $(`#stage`).text("TIE!");
     }
-    if (playerTwoData.choice === 'scissors') {
-      $(`#stage`).text(playerTwoData.name.toUpperCase() + " WINS")
+    if (playerTwoData.choice === "scissors") {
+      $(`#stage`).text(playerTwoData.name.toUpperCase() + " WINS");
     }
-  } else if (playerOneData.choice === 'scissors') {
-    if (playerTwoData.choice === 'rock') {
-      $(`#stage`).text(playerTwoData.name.toUpperCase() + " WINS")
+  } else if (playerOneData.choice === "scissors") {
+    if (playerTwoData.choice === "rock") {
+      $(`#stage`).text(playerTwoData.name.toUpperCase() + " WINS");
     }
-    if (playerTwoData.choice === 'paper') {
-      $(`#stage`).text(playerOneData.name.toUpperCase() + " WINS")
+    if (playerTwoData.choice === "paper") {
+      $(`#stage`).text(playerOneData.name.toUpperCase() + " WINS");
     }
-    if (playerTwoData.choice === 'scissors') {
-      $(`#stage`).text("TIE!")
+    if (playerTwoData.choice === "scissors") {
+      $(`#stage`).text("TIE!");
     }
   }
 }
