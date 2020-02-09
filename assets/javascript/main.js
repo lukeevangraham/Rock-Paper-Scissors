@@ -13,7 +13,9 @@ firebase.initializeApp(firebaseConfig);
 
 var database = firebase.database();
 let playersRef = database.ref("players");
+let currentTurnRef = database.ref("turn");
 
+let currentTurn = null;
 let currentPlayers;
 let username;
 let playerOne;
@@ -24,9 +26,12 @@ let playerTwoExists;
 let playerOneData;
 let playerTwoData;
 
-playersRef.on("value", function(snapshot) {
-  // console.log("LOOK HERE: ", snapshot.numChildren());
+//Click events that advance turn
+$(`.turnIncrementer`).click(function() {
+  console.log("TURN INCREMENTED!");
+});
 
+playersRef.on("value", function(snapshot) {
   currentPlayers = snapshot.numChildren();
 
   playerOneExists = snapshot.child("1").exists();
@@ -128,12 +133,14 @@ function processChoice(choice) {
   }
 }
 
-function playerTwoWins() {
-  playerOneRef = database.ref("/players/" + 1)
-  playerTwoRef = database.ref("/players/" + 2)
+function playerOneWins() {
+  playerOneData.wins++;
+  playerTwoData.losses++;
+}
 
-  playerOneRef.child("losses").set(playerOneData.losses + 1)
-  playerTwoRef.child("wins").set(playerTwoData.wins + 1)
+function playerTwoWins() {
+  playerOneData.losses++;
+  playerTwoData.wins++;
 }
 
 function compareChoices() {
@@ -141,37 +148,51 @@ function compareChoices() {
   playerTwoRef = database.ref("/players/" + 2);
   $(`#playerOneChoices`).text(playerOneData.choice);
   $(`#playerTwoChoices`).text(playerTwoData.choice);
-  console.log("PLAYER 2: ", playerTwoData);
   if (playerOneData.choice === "rock") {
     if (playerTwoData.choice === "rock") {
       $(`#stage`).text("TIE!");
     }
     if (playerTwoData.choice === "paper") {
       $(`#stage`).text(playerTwoData.name.toUpperCase() + " WINS");
-      playerTwoWins();
+      // playerTwoWins();
+      playerTwoWins()
     }
     if (playerTwoData.choice === "scissors") {
       $(`#stage`).text(playerOneData.name.toUpperCase() + " WINS");
+      playerOneWins()
     }
   } else if (playerOneData.choice === "paper") {
     if (playerTwoData.choice === "rock") {
       $(`#stage`).text(playerOneData.name.toUpperCase() + " WINS");
+      playerOneWins()
     }
     if (playerTwoData.choice === "paper") {
       $(`#stage`).text("TIE!");
     }
     if (playerTwoData.choice === "scissors") {
       $(`#stage`).text(playerTwoData.name.toUpperCase() + " WINS");
+      playerTwoWins()
     }
   } else if (playerOneData.choice === "scissors") {
     if (playerTwoData.choice === "rock") {
       $(`#stage`).text(playerTwoData.name.toUpperCase() + " WINS");
+      playerTwoWins()
     }
     if (playerTwoData.choice === "paper") {
       $(`#stage`).text(playerOneData.name.toUpperCase() + " WINS");
+      playerOneWins()
     }
     if (playerTwoData.choice === "scissors") {
       $(`#stage`).text("TIE!");
     }
   }
+
+  database.ref().update({
+    "players/1/wins": playerOneData.wins,
+    "players/1/losses": playerOneData.losses,
+    "players/1/choice": null,
+    "players/2/wins": playerTwoData.wins,
+    "players/2/losses": playerTwoData.losses,
+    "players/2/choice": null
+  });
 }
