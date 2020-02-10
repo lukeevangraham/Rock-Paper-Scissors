@@ -27,11 +27,6 @@ let playerOneData;
 let playerTwoData;
 let firstTurn = true;
 
-//Click events that advance turn
-$(`.turnIncrementer`).click(function() {
-  console.log("TURN INCREMENTED!");
-});
-
 playersRef.on("value", function(snapshot) {
   currentPlayers = snapshot.numChildren();
 
@@ -60,10 +55,10 @@ playersRef.on("value", function(snapshot) {
 
   if (playerOneExists && playerTwoExists) {
     if (firstTurn) {
-      console.log("not waiting")
+      // console.log("not waiting")
       initiateTurn()
     } else {
-      console.log("supposedly waiting")
+      // console.log("supposedly waiting")
       setTimeout(function(){initiateTurn()}, 3000)
     }
   }
@@ -71,6 +66,8 @@ playersRef.on("value", function(snapshot) {
 
 $(`#nameSubmit`).click(function(form) {
   // console.log($(`#username`).val());
+  $(`#jumboP`).remove()
+  $(`#jumboHR`).remove()
   username = $(`#username`).val();
   joinGame();
 });
