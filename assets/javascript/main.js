@@ -92,7 +92,7 @@ function joinGame() {
   });
 
   $(`#belowJumbo`).replaceWith(
-    `<div class="row"><div class="col-12 text-center m-3">Hi ` +
+    `<div class="row"><div class="col-12 text-center" id="belowJumbo">Hi ` +
       username +
       `!  You are Player ` +
       playerNum +
@@ -104,22 +104,34 @@ function joinGame() {
 
 function initiateTurn() {
   if (!playerOneData.choice) {
+    $(`#playerOneCard`).addClass("border border-warning");
     if (username === playerOneData.name) {
       $(`#playerOneChoices`).html(
-        `<button onclick="processChoice('rock')">Rock</button><button onclick="processChoice('paper')">Paper</button><button onclick="processChoice('scissors')">Scissors</button>`
+        `<button class="btn btn-warning m-1" onclick="processChoice('rock')">Rock</button><button class="btn btn-warning m-1" onclick="processChoice('paper')">Paper</button><button class="btn btn-warning m-1" onclick="processChoice('scissors')">Scissors</button>`
+      );
+      $(`#lowerBelowJumbo`).text(`It's your turn.`);
+    } else {
+      $(`#lowerBelowJumbo`).text(
+        `Waiting for ` + playerOneData.name + ` to choose.`
       );
     }
   } else if (!playerTwoData.choice) {
+    $(`#playerOneCard`).removeClass("border border-warning");
+    $(`#playerTwoCard`).addClass("border border-warning");
     if (username === playerTwoData.name) {
       $(`#playerTwoChoices`).html(
-        `<button onclick="processChoice('rock')">Rock</button><button onclick="processChoice('paper')">Paper</button><button onclick="processChoice('scissors')">Scissors</button>`
+        `<button class="btn btn-warning m-1" onclick="processChoice('rock')">Rock</button><button class="btn btn-warning m-1" onclick="processChoice('paper')">Paper</button><button class="btn btn-warning m-1" onclick="processChoice('scissors')">Scissors</button>`
+      );
+      $(`#lowerBelowJumbo`).text(`It's your turn.`);
+    } else {
+      $(`#lowerBelowJumbo`).text(
+        `Waiting for ` + playerTwoData.name + ` to choose.`
       );
     }
   }
 }
 
 function processChoice(choice) {
-  console.log("CHOICE: ", choice);
   playerRef = database.ref("/players/" + playerNum);
 
   playerRef.update({
@@ -144,6 +156,8 @@ function playerTwoWins() {
 }
 
 function compareChoices() {
+  $(`#playerOneCard`).removeClass(`border border-warning`);
+  $(`#playerTwoCard`).removeClass(`border border-warning`);
   playerOneRef = database.ref("/players/" + 1);
   playerTwoRef = database.ref("/players/" + 2);
   $(`#playerOneChoices`).text(playerOneData.choice);
@@ -155,32 +169,32 @@ function compareChoices() {
     if (playerTwoData.choice === "paper") {
       $(`#stage`).text(playerTwoData.name.toUpperCase() + " WINS");
       // playerTwoWins();
-      playerTwoWins()
+      playerTwoWins();
     }
     if (playerTwoData.choice === "scissors") {
       $(`#stage`).text(playerOneData.name.toUpperCase() + " WINS");
-      playerOneWins()
+      playerOneWins();
     }
   } else if (playerOneData.choice === "paper") {
     if (playerTwoData.choice === "rock") {
       $(`#stage`).text(playerOneData.name.toUpperCase() + " WINS");
-      playerOneWins()
+      playerOneWins();
     }
     if (playerTwoData.choice === "paper") {
       $(`#stage`).text("TIE!");
     }
     if (playerTwoData.choice === "scissors") {
       $(`#stage`).text(playerTwoData.name.toUpperCase() + " WINS");
-      playerTwoWins()
+      playerTwoWins();
     }
   } else if (playerOneData.choice === "scissors") {
     if (playerTwoData.choice === "rock") {
       $(`#stage`).text(playerTwoData.name.toUpperCase() + " WINS");
-      playerTwoWins()
+      playerTwoWins();
     }
     if (playerTwoData.choice === "paper") {
       $(`#stage`).text(playerOneData.name.toUpperCase() + " WINS");
-      playerOneWins()
+      playerOneWins();
     }
     if (playerTwoData.choice === "scissors") {
       $(`#stage`).text("TIE!");
