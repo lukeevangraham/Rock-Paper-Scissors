@@ -41,13 +41,19 @@ playersRef.on("value", function(snapshot) {
       $(`#playerOneScores`).text(
         `Wins : ` + playerOneData.wins + ` Losses: ` + playerOneData.losses
       ))
-    : $(`#playerOne`).text("Waiting for Player 1");
+    : ($(`#playerOne`).text("Waiting for Player 1"),
+      $(`#playerOneScores`).text(`Wins : 0 Losses: 0`),
+      $(`#lowerBelowJumbo`).text(`Waiting for Player 1`)
+      );
   playerTwoExists
     ? ($(`#playerTwo`).text(playerTwoData.name),
       $(`#playerTwoScores`).text(
         `Wins : ` + playerTwoData.wins + ` Losses: ` + playerTwoData.losses
       ))
-    : $(`#playerTwo`).text("Waiting for Player 2");
+    : ($(`#playerTwo`).text("Waiting for Player 2"),
+    $(`#playerTwoScores`).text(`Wins : 0 Losses: 0`),
+    $(`#lowerBelowJumbo`).text(`Waiting for Player 2`)
+    );
 
   if (playerOneData.choice && playerTwoData.choice) {
     compareChoices();
@@ -56,18 +62,20 @@ playersRef.on("value", function(snapshot) {
   if (playerOneExists && playerTwoExists) {
     if (firstTurn) {
       // console.log("not waiting")
-      initiateTurn()
+      initiateTurn();
     } else {
       // console.log("supposedly waiting")
-      setTimeout(function(){initiateTurn()}, 3000)
+      setTimeout(function() {
+        initiateTurn();
+      }, 3000);
     }
   }
 });
 
 $(`#nameSubmit`).click(function(form) {
   // console.log($(`#username`).val());
-  $(`#jumboP`).remove()
-  $(`#jumboHR`).remove()
+  $(`#jumboP`).remove();
+  $(`#jumboHR`).remove();
   username = $(`#username`).val();
   joinGame();
 });
