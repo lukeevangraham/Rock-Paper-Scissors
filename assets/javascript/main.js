@@ -25,6 +25,7 @@ let playerOneExists;
 let playerTwoExists;
 let playerOneData;
 let playerTwoData;
+let firstTurn = true;
 
 //Click events that advance turn
 $(`.turnIncrementer`).click(function() {
@@ -58,15 +59,15 @@ playersRef.on("value", function(snapshot) {
   }
 
   if (playerOneExists && playerTwoExists) {
-    // console.log("LETS PLAY A GAME!");
-    initiateTurn();
+    if (firstTurn) {
+      console.log("not waiting")
+      initiateTurn()
+    } else {
+      console.log("supposedly waiting")
+      setTimeout(function(){initiateTurn()}, 3000)
+    }
   }
 });
-
-// playersRef.on("child_added", function(snapshot) {
-
-//   $(`#playerOne`).text(snapshot.val().name)
-// })
 
 $(`#nameSubmit`).click(function(form) {
   // console.log($(`#username`).val());
@@ -103,7 +104,11 @@ function joinGame() {
 }
 
 function initiateTurn() {
+  $(`#playerOneChoices`).empty();
+  $(`#playerTwoChoices`).empty();
+  $(`#stage`).empty();
   if (!playerOneData.choice) {
+    firstTurn = true;
     $(`#playerOneCard`).addClass("border border-warning");
     if (username === playerOneData.name) {
       $(`#playerOneChoices`).html(
@@ -156,12 +161,14 @@ function playerTwoWins() {
 }
 
 function compareChoices() {
+  $(`#lowerBelowJumbo`).empty();
+  firstTurn = false;
   $(`#playerOneCard`).removeClass(`border border-warning`);
   $(`#playerTwoCard`).removeClass(`border border-warning`);
   playerOneRef = database.ref("/players/" + 1);
   playerTwoRef = database.ref("/players/" + 2);
-  $(`#playerOneChoices`).text(playerOneData.choice);
-  $(`#playerTwoChoices`).text(playerTwoData.choice);
+  $(`#playerOneChoices`).text(playerOneData.choice.toUpperCase());
+  $(`#playerTwoChoices`).text(playerTwoData.choice.toUpperCase());
   if (playerOneData.choice === "rock") {
     if (playerTwoData.choice === "rock") {
       $(`#stage`).text("TIE!");
