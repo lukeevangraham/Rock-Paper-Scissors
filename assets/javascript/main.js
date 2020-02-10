@@ -55,6 +55,10 @@ playersRef.on("value", function(snapshot) {
     $(`#lowerBelowJumbo`).text(`Waiting for Player 2`)
     );
 
+    if (!playerOneExists && !playerTwoExists) {
+      $(`#lowerBelowJumbo`).text(`Waiting for Players 1 & 2`)
+    }
+
   if (playerOneData.choice && playerTwoData.choice) {
     compareChoices();
   }
