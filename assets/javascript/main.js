@@ -13,7 +13,7 @@ firebase.initializeApp(firebaseConfig);
 
 var database = firebase.database();
 let playersRef = database.ref("players");
-let currentTurnRef = database.ref("turn");
+let chatData = database.ref("/chat");
 
 let currentTurn = null;
 let currentPlayers;
@@ -78,16 +78,32 @@ playersRef.on("value", function(snapshot) {
 
 $(`#nameSubmit`).click(function(form) {
   // console.log($(`#username`).val());
+  // $(`#jumboP`).remove();
+  // $(`#jumboHR`).remove();
+  // username = $(`#username`).val();
+  // joinGame();
+
+  if ($(`#username`).val() != "") {
+    processNameSubmission($(`#username`).val())
+  }
+});
+
+$(`#username`).keypress(function(e) {
+  if (e.which === 13 && $(`#username`).val() != "") {
+    processNameSubmission($(`#username`).val())
+  }
+})
+
+function processNameSubmission(nameEntered) {
   $(`#jumboP`).remove();
   $(`#jumboHR`).remove();
-  username = $(`#username`).val();
+  username = nameEntered;
   joinGame();
-});
+}
 
 function joinGame() {
   if (!playerOneExists) {
     playerNum = 1;
-    // playerOne = {name: $(`#username`).val(), wins: 0, losses: 0, choice: null}
   } else if (!playerTwoExists) {
     playerNum = 2;
   }
@@ -155,7 +171,6 @@ function processChoice(choice) {
   if (playerNum === 1) {
     $(`#playerOneChoices`).empty();
   } else if (playerNum === 2) {
-    // $(`#playerTwoChoices`).empty();
   }
 }
 
@@ -184,7 +199,6 @@ function compareChoices() {
     }
     if (playerTwoData.choice === "paper") {
       $(`#stage`).text(playerTwoData.name.toUpperCase() + " WINS");
-      // playerTwoWins();
       playerTwoWins();
     }
     if (playerTwoData.choice === "scissors") {
@@ -226,3 +240,35 @@ function compareChoices() {
     "players/2/choice": null
   });
 }
+
+$(`#chat-send`).click(function() {
+  submitMessage(username, $(`#chat-input`).val())
+})
+
+// enter submits message
+$(`#chat-input`).keypress(function(e) {
+  if (e.which === 13 && $(`#chat-input`).val() != "") {
+    submitMessage(username, $(`#chat-input`).val())
+  }
+})
+
+function submitMessage(username, message) {
+  chatData.push({
+    username: username ? username : 'Guest',
+    message: $(`#chat-input`).val()
+  })
+  $(`#chat-input`).val(null);
+}
+
+// function checkSubmit(e) {
+//   if(e && e.keyCode == 13) {
+//     document.forms[0].submit();
+//   }
+// }
+
+chatData.on('child_added', function (data) {
+  $(`#chat-messages`).append(`<p class="chat-message mb-0">` + data.val().username + `: ` + data.val().message + `</p>`)
+
+  // keeps Div scrolled to bottom on each update
+  $(`#chat-messages`).scrollTop($(`#chat-messages`)[0].scrollHeight);
+})
