@@ -126,6 +126,11 @@ function joinGame() {
   );
 
   playerRef.onDisconnect().remove();
+
+  chatData.onDisconnect().push({
+    username: username,
+    message: username + ` has disconnected`
+  })
 }
 
 function initiateTurn() {
